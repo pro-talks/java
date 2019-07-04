@@ -1,0 +1,9 @@
+_site
+.sass-cache
+.jekyll-metadata
+.idea
+.bundle
+vendor
+*.iml
+**/_tmp_*
+target
