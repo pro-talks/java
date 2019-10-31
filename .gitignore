@@ -7,3 +7,4 @@ vendor
 *.iml
 **/_tmp_*
 target
+_posts/**/img
