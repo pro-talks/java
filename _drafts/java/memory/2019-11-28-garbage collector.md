@@ -101,16 +101,64 @@ In general, choosing the size for a particular generation is a trade-off between
 
 
 
-## Measurement ->  TODO
+## Measurement
+
+### Команда `-verbose:`
+
+Использование команды `-verbose:`
+
+
+
+## Sizing the Generations
+
+- The Young Generation
+- The Survivor Space Sizing
+- The tenured generation
+- Virtual space
+
+
+
+## Available Collectors
+
+- The serial collector
+  - Выбирается на определенном оборудовании, явно может быть назначен `-XX:+UseSerialGC`
+- The parallel collector (also known as the throughput collector)
+  - Выбирается по дефолту на многопроцессорных машинах со средним или большим размером `Heap`, может быть назначен `-XX:+UseParallelGC`
+  - Parallel compaction 
+  - Two concurrent collectors. Use the option `-XX:+UseConcMarkSweepGC` to enable the CMS collector or `-XX:+UseG1GC` to enable the G1 collector.
+
+
+
+## Selecting a Collector
+
+Important
+
+
+
+
+
+##  The Parallel Collector
+
+
+
+## The Mostly Concurrent Collectors
+
+
+
+## Concurrent Mark Sweep (CMS) Collector
+
+**Starting a Concurrent Collection Cycle -> TODO**
 
 
 
 # Вопросы
 
 - Какой самый простой способ отчистить мусора?
-
 - Почему он не подходит?
 - На какой аксиопер построена сборка мусора с использованием поколений?
+- Какой сборщик мусора работает по умолчанию?
+- Чем различаются `generations` для разных `GC`?
+- 
 
 
 
