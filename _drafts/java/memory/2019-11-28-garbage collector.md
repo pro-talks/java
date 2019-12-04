@@ -6,9 +6,24 @@ categories: jvm
 permalink: garbage-collector
 ---
 
-# Сборщик мусора (`Garbage collector`)
+# Сборщики мусора (`Garbage collector`) в `JVM HotSpot `
 
-Сборщик мусора (``Garbage collector - GC`) - это инструмент управления памятью. Он обеспечивает автоматическое управление памятью посредством следующих операций:
+Сборщик мусора (``Garbage collector - GC`) - это инструмент управления памятью, который
+
+- **выделяет память** для новых объектов и помещает их в `young generation`,
+- **перемещает старые живые объекты** в `old generation`,
+- **ищет живые объекты** в `generations`, используя параллельные стратегии маркировки,
+- **восстанавливает память**, удаляя и сжимая объекты, используя параллельное копирование.
+
+
+
+## Notes
+
+1. The Java HotSpot VM triggers the marking phase when the total Java heap occupancy exceeds the default threshold. See the sections [Concurrent Mark Sweep (CMS) Collector](https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/cms.html#concurrent_mark_sweep_cms_collector) and [Garbage-First Garbage Collector](https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/g1_gc.html#garbage_first_garbage_collection).
+
+
+
+Он обеспечивает автоматическое управление памятью посредством следующих операций:
 
 - Выделение предметов `young generation` и продвижение пожилых предметов в `old generation`.
 
@@ -147,7 +162,15 @@ Important
 
 ## Concurrent Mark Sweep (CMS) Collector
 
-**Starting a Concurrent Collection Cycle -> TODO**
+
+
+## Garbage-First Garbage Collector
+
+
+
+## Garbage-First Garbage Collector Tuning
+
+
 
 
 
@@ -158,7 +181,7 @@ Important
 - На какой аксиопер построена сборка мусора с использованием поколений?
 - Какой сборщик мусора работает по умолчанию?
 - Чем различаются `generations` для разных `GC`?
-- 
+- HotSpot VM Frequently Asked Questions (FAQ) -> https://www.oracle.com/technetwork/java/hotspotfaq-138619.html
 
 
 
