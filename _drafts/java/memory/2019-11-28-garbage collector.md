@@ -11,9 +11,55 @@ permalink: garbage-collector
 Сборщик мусора (``Garbage collector - GC`) - это инструмент управления памятью, который
 
 - **выделяет память** для новых объектов и помещает их в `young generation`,
-- **перемещает старые живые объекты** в `old generation`,
+- **перемещает живые объекты** в `old generation`,
 - **ищет живые объекты** в `generations`, используя параллельные стратегии маркировки,
 - **восстанавливает память**, удаляя и сжимая объекты, используя параллельное копирование.
+
+
+
+## Закон Амдала
+
+Закон Амдала (ускорение с помощью параллельного вычисления ограничено размером последовательной части программы) подразумевает что большинство рабочих нагрузок не может быть идеально распараллелено; некоторая часть работ всегда последовательная и не поддается распараллеливанию.
+
+
+
+## Потеря пропускной способности из-за сборки мусора
+
+Если сборка мусора занимает 1% времени на однопроцессорной машине. То это приведет к 20% потери пропускной способности при 32 процессорах.
+
+Если сборка мусора занимает 10% времени (не считается очень большим значением для однопроцессорных систем), то это приведет к более чем 75% потери пропускной способности на 32 процессорах.
+
+![](https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/img/jsgct_dt_005_gph_pc_vs_tp.png)
+
+То есть незначительные проблемы скорости на маленьких системах, могут привести к `bottlenecks` при масштабировании в большую систему. Однако, небольшие улучшения могут дать большой скачок в производительности. Для достаточно больших систем, становится целесообразным выбрать правильных `GC` и настроить его.
+
+
+
+## Последовательный сборщик (`Serial collector`) 
+
+Последовательный сборщик (`Serial collector`) обычно подходит для маленьких приложений, которые требуют примерно 100MB. Остальные коллекторы имеют дополнительные накладные расходы и сложность, что является ценой за специализированное поведение. Ситуация когда `Serial collector` не является лучшим выбором, это большое многопоточное приложение, которое выполняется на машине с большим количеством памяти и двумя и более процессорами. Когда приложение запущено на такой машине, то параллельный сборщик (`parallel collector`) выбирается по умолчанию. 
+
+> See the section [Ergonomics](https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/ergonomics.html#ergonomics).
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+The red line is an application spending only 1% of the time in garbage collection on a uniprocessor system. This translates to more than a 20% loss in throughput on systems with 32 processors. The magenta line shows that for an application at 10% of the time in garbage collection (not considered an outrageous amount of time in garbage collection in uniprocessor applications), more than 75% of throughput is lost when scaling up to 32 processors.
 
 
 
@@ -23,31 +69,17 @@ permalink: garbage-collector
 
 
 
-Он обеспечивает автоматическое управление памятью посредством следующих операций:
-
-- Выделение предметов `young generation` и продвижение пожилых предметов в `old generation`.
-
-- Поиск живых объектов в `old generation` через параллельную (`concurrent (parallel)`) фазу маркировки. `JVM HotSpot ` запускает фазу маркировки, когда общая занятость `Heap` превышает пороговое значение по умолчанию. См. Разделы «Concurrent Mark Sweep (CMS) Collector» и «Garbage-First Garbage Collector».
-
-- Восстановление свободной памяти путем сжатия живых объектов путем параллельного копирования. Смотрите разделы `The Parallel Collector` и  `Garbage-First Garbage Collector`
 
 
 
-## Amdahl's law
-
-Amdahl's law (parallel speedup in a given problem is limited by the sequential portion of the problem) implies that most workloads cannot be perfectly parallelized; some portion is always sequential and does not benefit from parallelism.
 
 
 
-## 1% time -> 20% loss in throughput
-
-The graph in [Figure 1-1, "Comparing Percentage of Time Spent in Garbage Collection"](https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/introduction.html#percentage_time_gc) models an ideal system that is perfectly scalable with the exception of garbage collection (GC). The red line is an application spending only 1% of the time in garbage collection on a uniprocessor system. This translates to more than a 20% loss in throughput on systems with 32 processors. The magenta line shows that for an application at 10% of the time in garbage collection (not considered an outrageous amount of time in garbage collection in uniprocessor applications), more than 75% of throughput is lost when scaling up to 32 processors.
 
 
 
-## The serial collector VS The parallel collector
 
-The serial collector is usually adequate for most "small" applications (those requiring heaps of up to approximately 100 megabytes (MB (on modern processors). The other collectors have additional overhead or complexity, which is the price for specialized behavior. If the application does not need the specialized behavior of an alternate collector, use the serial collector. One situation where the serial collector is not expected to be the best choice is a large, heavily threaded application that runs on a machine with a large amount of memory and two or more processors. When applications are run on such server-class machines, the parallel collector is selected by default. See the section Ergonomics.
+
 
 
 
@@ -176,6 +208,14 @@ Important
 
 # Вопросы
 
+- Когда выбор `GC` имеет значение?
+  - For some applications, the answer is never. That is, the application can perform well in the presence of garbage collection with pauses of modest frequency and duration. However, this is not the case for a large class of applications, particularly those with large amounts of data (multiple gigabytes), many threads, and high transaction rates.
+- Как звучит закон Амдала?
+  - Amdahl's law (parallel speedup in a given problem is limited by the sequential portion of the problem) implies that most workloads cannot be perfectly parallelized; some portion is always sequential and does not benefit from parallelism.
+- Как влияет сборка мусора на потерю пропускной способности на малых и больших системах? И почему?
+- Когда стоит и не стоит использовать `Serial collector`?
+- Когда `Serial collector` выбирается по умолчанию?
+- 
 - Какой самый простой способ отчистить мусора?
 - Почему он не подходит?
 - На какой аксиопер построена сборка мусора с использованием поколений?
